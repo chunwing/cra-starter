@@ -1,10 +1,9 @@
 import React from 'react';
 import logo from './logo.svg';
 import { Counter } from './features/counter/Counter';
-import './App.css';
+import './App.scss';
 
-function App() {
-  return (
+const App = (): JSX.Element => (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
@@ -13,14 +12,15 @@ function App() {
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
         <span>
-          <span>Learn </span>
+          <span>Learn me</span>
           <a
             className="App-link"
             href="https://reactjs.org/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            React
+            <h1> My React and TypeScript App!!{" "}
+    {new Date().toLocaleDateString()}</h1>
           </a>
           <span>, </span>
           <a
@@ -53,6 +53,6 @@ function App() {
       </header>
     </div>
   );
-}
+
 
 export default App;

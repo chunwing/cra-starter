@@ -9,9 +9,9 @@ import {
   incrementIfOdd,
   selectCount,
 } from './counterSlice';
-import styles from './Counter.module.css';
+import styles from './Counter.module.scss';
 
-export function Counter() {
+export const Counter = ():JSX.Element => {
   const count = useAppSelector(selectCount);
   const dispatch = useAppDispatch();
   const [incrementAmount, setIncrementAmount] = useState('2');
