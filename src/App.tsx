@@ -1,58 +1,31 @@
 import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+// import logo from './logo.svg';
+// import { Counter } from './features/counter/Counter';
 import './App.scss';
+import {useSelector, useDispatch } from "react-redux"
+import {RootState} from "./state/reducers"
+import { bindActionCreators } from 'redux';
+import {actionCreators} from "./state"
 
-const App = (): JSX.Element => (
+const App = (): JSX.Element => {
+  const account  = useSelector((state:RootState)=>state.account);
+  const dispatch = useDispatch()
+  
+  const {depositMoney, withdrawMoney} = bindActionCreators(actionCreators,dispatch)
+  
+  
+  console.log('account: ', account)
+  
+  return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn me</span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h1> My React and TypeScript App!!{" "}
-    {new Date().toLocaleDateString()}</h1>
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+      <h1>{account}</h1>
+      <button onClick={()=>depositMoney(100)}>Deposit</button>
+      <button onClick={()=>withdrawMoney(100)}>Withdraw</button>
     </div>
+  
   );
+}
+    
 
 
 export default App;
