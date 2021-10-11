@@ -12,7 +12,7 @@ const App = (): JSX.Element => (
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
         <span>
-          <span>Learn me</span>
+          <span>Learn redux</span>
           <a
             className="App-link"
             href="https://reactjs.org/"

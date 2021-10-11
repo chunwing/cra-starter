@@ -151,44 +151,10 @@ yarn add -D optimize-css-assets-webpack-plugin uglifyjs-webpack-plugin
 
 ## Lazying loading our app
 
-To lazy load a React application, we use a library called  [react-loadable](https://github.com/jamiebuilds/react-loadable). It has a Higher Order Component (HOC) called Loadable. Loadable dynamically loads any module before rendering it into your app.
-
-To install the library as a dependency, run:
+React code splitting made easy.
 ```shell
-yarn add -D react-loadable @types/react-loadable
+yarn add -D @loadable/component @types/loadable__component
 ```
-After installation, create a new file in  `src`  called  `LoadableApp.js`
-
-Copy the code below into it:
-```typescript
-import  React, { Component, ReactElement } from  "react";
-import  Loadable  from  "react-loadable";
-const  LoadApp = Loadable({
-	loader: () =>  import("./App"),
-	loading() {
-		return  <div>Loading...</div>;
-	},
-	timeout:  10000  // 10 seconds
-});
-
-export  default  class  LoadableApp  extends  Component {
-	render():ReactElement {
-		return  <LoadApp/>
-	}
-}
-```
-
-Let me explain the code above:
-
--   we imported the HOC Loadable from react-loadable
--   we passed in an object to tell Loadable what to do
--   **loader**: this tells Loadable to import our specified component
--   **loading**: a message to display to users while Loadable is importing our component
--   **timeout**: this would tell Loadable how long to try loading the component before it fails. Handles issues with slow internet connection
--   we assign the component returned by Loadable to  `LoadApp`
--   we render the returned component
-
-Now, we have to update our  `index.js`  to render the lazy-loaded and code-split component. We need to change every mention of  `App.js`  with the  `LoadableApp.js`.
 
 
 ## Measuring Performance
@@ -199,3 +165,93 @@ To measure any of the supported metrics, you only need to pass a function into t
 reportWebVitals(console.log);
 ```
 This function is fired when the final values for any of the metrics have finished calculating on the page. You can use it to log any of the results to the console or send to a particular endpoint.
+
+## Develop React Development in Docker container
+Use just one command ``docker-compose up`` to start your development workflow in any host operating system.
+
+### Initial setup with Docker
+Create a folder for saving docker-related files in the project root.
+
+```
+├──.docker                  
+│   ├── ci        
+│   ├── dev 
+│       └── Dockerfile        # our development dockerfile
+│   ├── prod
+│   └── scripts                
+└── ...
+```
+
+Create a Dockerfile in the .docker/dev/ directory.
+```dockerfile
+FROM node:16
+RUN curl -o- -L https://yarnpkg.com/install.sh | bash
+
+# Create and define the node_modules's cache directory.
+WORKDIR /cache
+
+# install app dependencies
+COPY package.json .
+COPY yarn.lock .
+RUN yarn install --silent
+
+# set working directory
+WORKDIR /app
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+
+# copy source code
+COPY . .
+```
+Create a file name docker-compose.yml in the project's root directory. Following is my docker-compose.yml
+```yml
+version: "3.8"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./.docker/dev/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ".:/app"
+    ports:
+      - 3000:3000
+    command: >
+      bash -c "cp -rfu /cache/node_modules/. /app/node_modules/  
+      && yarn start"
+
+  test:
+    build:
+      context: .
+      dockerfile: ./.docker/dev/Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: ["yarn", "test"]
+```
+## Development workflow for developers
+1. Pull the source code
+2. For the first time or the package.json changed run
+```shell
+docker-compose build
+```
+3. Then, run the following command to start the environment.
+```shell
+docker-compose up -d
+```
+4. To see the logs of your app
+```shell
+docker-compose logs -f web
+```
+5. To see and follow the logs of your tests
+```shell
+docker-compose logs -f test
+```
+6. If you need to install any npm package.
+```shell
+docker-compose exec web npm install pacakge-name
+```
+7. stop the containers
+```shell
+docker-compose down
+```
