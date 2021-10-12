@@ -149,13 +149,12 @@ The plugin extracts our CSS from the JS files to a separate file when going into
 yarn add -D optimize-css-assets-webpack-plugin uglifyjs-webpack-plugin
 ```
 
-## Lazying loading our app
+## Code Splitting
 
 React code splitting made easy.
 ```shell
-yarn add -D @loadable/component @types/loadable__component
-```
 
+```
 
 ## Measuring Performance
 By default, Create React App includes a performance relayer that allows you to measure and analyze the performance of your application using different metrics.
